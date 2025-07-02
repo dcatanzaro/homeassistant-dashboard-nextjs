@@ -14,7 +14,7 @@ export function QuickStatusCards({ sensors }: QuickStatusCardsProps) {
         <section className="mb-6">
             <div className="grid grid-cols-2 gap-3">
                 {/* Temperature Card */}
-                <Card className="w-48 h-24 bg-[#18181b] rounded-lg flex items-start">
+                <Card className="w-full h-24 bg-[#18181b] rounded-lg flex items-start">
                     <CardContent className="flex p-2 w-full h-full">
                         <div className="flex items-center justify-center bg-orange-900/30 rounded-full h-8 w-12 mt-1 mr-3">
                             <Thermometer className="h-4 w-4 text-orange-400" />
@@ -93,7 +93,7 @@ export function QuickStatusCards({ sensors }: QuickStatusCardsProps) {
                 </Card>
 
                 {/* Power Card */}
-                <Card className="w-48 h-24 bg-[#18181b] rounded-lg flex items-start">
+                <Card className="w-full h-24 bg-[#18181b] rounded-lg flex items-start">
                     <CardContent className="flex p-2 w-full h-full">
                         <div className="flex items-center justify-center bg-blue-900/30 rounded-full h-8 w-12 mt-1 mr-3">
                             <Zap className="h-4 w-4 text-blue-400" />
