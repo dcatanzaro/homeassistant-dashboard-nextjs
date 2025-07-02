@@ -22,7 +22,7 @@ RUN pnpm build
 ENV NODE_ENV=production
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 5050
 
 # Command to run the application
 CMD ["pnpm", "start"] 
