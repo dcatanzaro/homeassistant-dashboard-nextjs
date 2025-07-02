@@ -9,6 +9,7 @@ const nextConfig = {
     images: {
         unoptimized: true,
     },
+    serverExternalPackages: ["ws"],
     env: {
         HA_URL: process.env.HA_URL,
         HA_TOKEN: process.env.HA_TOKEN,

@@ -34,12 +34,11 @@ interface WebSocketMessage {
     };
 }
 
-class HomeAssistantWebSocket {
-    private ws: WebSocket | null = null;
+class HomeAssistantSSE {
+    private eventSource: EventSource | null = null;
     private reconnectAttempts = 0;
     private maxReconnectAttempts = 5;
     private reconnectDelay = 1000;
-    private messageId = 1;
     private onStateChange: ((state: HomeAssistantState) => void) | null = null;
     private config: HomeAssistantConfig;
 
@@ -54,75 +53,33 @@ class HomeAssistantWebSocket {
     connect(): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                this.ws = new WebSocket(this.config.wsUrl);
+                this.eventSource = new EventSource(this.config.wsUrl);
 
-                this.ws.onopen = () => {
-                    console.log("WebSocket connected to Home Assistant");
-                    this.authenticate()
-                        .then(() => this.subscribeToStates())
-                        .then(() => {
-                            this.reconnectAttempts = 0;
-                            resolve();
-                        })
-                        .catch(reject);
+                this.eventSource.onopen = () => {
+                    console.log("SSE connected to Home Assistant");
+                    this.reconnectAttempts = 0;
+                    resolve();
                 };
 
-                this.ws.onmessage = (event) => {
-                    const message: WebSocketMessage = JSON.parse(event.data);
-                    this.handleMessage(message);
+                this.eventSource.onmessage = (event) => {
+                    try {
+                        const message: WebSocketMessage = JSON.parse(
+                            event.data
+                        );
+                        this.handleMessage(message);
+                    } catch (error) {
+                        console.error("Error parsing SSE message:", error);
+                    }
                 };
 
-                this.ws.onclose = () => {
-                    console.log("WebSocket disconnected from Home Assistant");
+                this.eventSource.onerror = (error) => {
+                    console.error("SSE error:", error);
                     this.handleReconnect();
-                };
-
-                this.ws.onerror = (error) => {
-                    console.error("WebSocket error:", error);
-                    reject(error);
                 };
             } catch (error) {
                 reject(error);
             }
         });
-    }
-
-    private async authenticate(): Promise<void> {
-        if (!this.ws) throw new Error("WebSocket not connected");
-
-        const authMessage = {
-            type: "auth",
-            access_token: this.config.token,
-        };
-
-        this.ws.send(JSON.stringify(authMessage));
-
-        return new Promise((resolve, reject) => {
-            const handleAuth = (event: MessageEvent) => {
-                const message: WebSocketMessage = JSON.parse(event.data);
-                if (message.type === "auth_ok") {
-                    this.ws!.removeEventListener("message", handleAuth);
-                    resolve();
-                } else if (message.type === "auth_invalid") {
-                    this.ws!.removeEventListener("message", handleAuth);
-                    reject(new Error("Authentication failed"));
-                }
-            };
-
-            this.ws!.addEventListener("message", handleAuth);
-        });
-    }
-
-    private async subscribeToStates(): Promise<void> {
-        if (!this.ws) throw new Error("WebSocket not connected");
-
-        const subscribeMessage = {
-            id: this.messageId++,
-            type: "subscribe_events",
-            event_type: "state_changed",
-        };
-
-        this.ws.send(JSON.stringify(subscribeMessage));
     }
 
     private handleMessage(message: WebSocketMessage): void {
@@ -156,16 +113,16 @@ class HomeAssistantWebSocket {
     }
 
     disconnect(): void {
-        if (this.ws) {
-            this.ws.close();
-            this.ws = null;
+        if (this.eventSource) {
+            this.eventSource.close();
+            this.eventSource = null;
         }
     }
 }
 
 class HomeAssistantClient {
     private config: HomeAssistantConfig;
-    private wsClient: HomeAssistantWebSocket | null = null;
+    private sseClient: HomeAssistantSSE | null = null;
     private stateUpdateCallbacks: Set<(state: HomeAssistantState) => void> =
         new Set();
 
@@ -173,20 +130,17 @@ class HomeAssistantClient {
         this.config = {
             url: `${process.env.DASHBOARD_URL}/api/home-assistant`,
             urlPost: `${process.env.DASHBOARD_POSTURL}/api/home-assistant`,
-            wsUrl: `${process.env.HA_URL?.replace(
-                "http",
-                "wss"
-            )}/api/websocket`,
+            wsUrl: `${process.env.DASHBOARD_URL}/api/websocket`,
             token: process.env.HA_TOKEN || "",
         };
     }
 
     async connectWebSocket(): Promise<void> {
-        if (this.wsClient) {
-            this.wsClient.disconnect();
+        if (this.sseClient) {
+            this.sseClient.disconnect();
         }
 
-        this.wsClient = new HomeAssistantWebSocket(
+        this.sseClient = new HomeAssistantSSE(
             this.config,
             (state: HomeAssistantState) => {
                 // Notify all registered callbacks
@@ -196,13 +150,13 @@ class HomeAssistantClient {
             }
         );
 
-        await this.wsClient.connect();
+        await this.sseClient.connect();
     }
 
     disconnectWebSocket(): void {
-        if (this.wsClient) {
-            this.wsClient.disconnect();
-            this.wsClient = null;
+        if (this.sseClient) {
+            this.sseClient.disconnect();
+            this.sseClient = null;
         }
     }
 
