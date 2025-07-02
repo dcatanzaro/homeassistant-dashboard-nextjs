@@ -1,6 +1,6 @@
 interface HomeAssistantConfig {
     url: string;
-    token: string;
+    urlPost: string;
 }
 
 interface HomeAssistantState {
@@ -25,18 +25,9 @@ class HomeAssistantClient {
     private config: HomeAssistantConfig;
 
     constructor() {
-        const url = process.env.HA_URL;
-        const token = process.env.HA_TOKEN;
-
-        if (!url || !token) {
-            throw new Error(
-                "Home Assistant URL and token must be provided in environment variables"
-            );
-        }
-
         this.config = {
-            url: url.endsWith("/") ? url.slice(0, -1) : url,
-            token,
+            url: `${process.env.DASHBOARD_URL}/api/home-assistant`,
+            urlPost: `${process.env.DASHBOARD_POSTURL}/api/home-assistant`,
         };
     }
 
@@ -44,18 +35,27 @@ class HomeAssistantClient {
         endpoint: string,
         options: RequestInit = {}
     ): Promise<T> {
-        console.log(`${this.config.url}/api${endpoint}`);
-        const response = await fetch(`${this.config.url}/api${endpoint}`, {
-            ...options,
-            mode: "cors",
-            credentials: "same-origin",
-            headers: {
-                Authorization: `Bearer ${this.config.token}`,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                ...options.headers,
-            },
-        });
+        const url = new URL(this.config.url);
+        const urlPost = new URL(this.config.urlPost);
+
+        if (endpoint.startsWith("/states")) {
+            const entityId = endpoint.split("/")[2];
+            if (entityId) {
+                url.searchParams.set("entityId", entityId);
+            }
+        }
+
+        const response = await fetch(
+            options.method === "POST" ? urlPost.toString() : url.toString(),
+            {
+                ...options,
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    ...options.headers,
+                },
+            }
+        );
 
         if (!response.ok) {
             throw new Error(`Home Assistant API error: ${response.statusText}`);
@@ -73,20 +73,13 @@ class HomeAssistantClient {
     }
 
     async callService(serviceCall: HomeAssistantServiceCall): Promise<any> {
-        console.log(serviceCall);
-
-        return this.request(
-            `/services/${serviceCall.domain}/${serviceCall.service}`,
-            {
-                method: "POST",
-                body: JSON.stringify(serviceCall.service_data || {}),
-            }
-        );
+        return this.request("", {
+            method: "POST",
+            body: JSON.stringify(serviceCall),
+        });
     }
 
     async toggleEntity(entityId: string): Promise<any> {
-        console.log({ entityId });
-
         const [domain] = entityId.split(".");
         return this.callService({
             domain,
