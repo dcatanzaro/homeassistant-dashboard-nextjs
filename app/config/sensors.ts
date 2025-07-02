@@ -13,6 +13,12 @@ export const sensorConfigs: SensorConfig[] = [
         icon: "",
     },
     {
+        entityId: "switch.lightswitch_workshop",
+        displayName: "Workshop",
+        unit: "",
+        icon: "",
+    },
+    {
         entityId: "switch.lightswitch_living_ladder",
         displayName: "Living Ladder",
         unit: "",
