@@ -173,7 +173,10 @@ class HomeAssistantClient {
         this.config = {
             url: `${process.env.DASHBOARD_URL}/api/home-assistant`,
             urlPost: `${process.env.DASHBOARD_POSTURL}/api/home-assistant`,
-            wsUrl: `${process.env.HA_URL?.replace("http", "ws")}/api/websocket`,
+            wsUrl: `${process.env.HA_URL?.replace(
+                "http",
+                "wss"
+            )}/api/websocket`,
             token: process.env.HA_TOKEN || "",
         };
     }
