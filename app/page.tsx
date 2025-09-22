@@ -30,7 +30,7 @@ export default function Dashboard() {
             {/* Header */}
             <header className="bg-gray-900 border-b border-gray-800 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-bold">Home Dashboard</h1>
+                    <h1 className="text-xl font-bold">Home Dashboard V1</h1>
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1">
                             {connected ? (
