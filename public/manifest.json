@@ -1,6 +1,8 @@
 {
     "name": "Smart Home Dashboard",
+    "id": "/",
     "short_name": "Home Dashboard",
+    "lang": "en-US",
     "description": "A modern smart home control dashboard",
     "start_url": "/",
     "scope": "/",
@@ -8,6 +10,7 @@
     "orientation": "portrait-primary",
     "background_color": "#000000",
     "theme_color": "#000000",
+    "prefer_related_applications": false,
     "categories": ["productivity", "utilities"],
     "icons": [
         {

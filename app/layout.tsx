@@ -1,4 +1,5 @@
 import type React from "react";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -6,17 +7,34 @@ import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
-    title: "Smart Home Dashboard",
+export const metadata: Metadata = {
+    applicationName: "Smart Home Dashboard",
+    title: {
+        default: "Smart Home Dashboard",
+        template: "%s | Smart Home Dashboard",
+    },
     description: "A modern smart home control dashboard",
     generator: "v0.dev",
     manifest: "/manifest.json",
+    themeColor: "#000000",
     appleWebApp: {
         capable: true,
         statusBarStyle: "default",
         title: "Smart Home Dashboard",
     },
     icons: {
+        icon: [
+            {
+                url: "/icons/icon-192x192.png",
+                sizes: "192x192",
+                type: "image/png",
+            },
+            {
+                url: "/icons/icon-512x512.png",
+                sizes: "512x512",
+                type: "image/png",
+            },
+        ],
         apple: [
             {
                 url: "/icons/apple-touch-icon.png",
@@ -27,7 +45,7 @@ export const metadata = {
     },
 };
 
-export const viewport = {
+export const viewport: Viewport = {
     width: "device-width",
     initialScale: 1,
     maximumScale: 1,
@@ -43,6 +61,7 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
+                <meta name="application-name" content="Smart Home Dashboard" />
                 <meta name="apple-mobile-web-app-capable" content="yes" />
                 <meta
                     name="apple-mobile-web-app-status-bar-style"
@@ -62,15 +81,22 @@ export default function RootLayout({
                 <Script id="service-worker" strategy="afterInteractive">
                     {`
                         if ('serviceWorker' in navigator) {
-                            window.addEventListener('load', () => {
-                                navigator.serviceWorker.register('/sw.js')
-                                    .then(registration => {
+                            const register = () => {
+                                navigator.serviceWorker
+                                    .register('/sw.js')
+                                    .then(() => {
                                         console.log('ServiceWorker registration successful');
                                     })
-                                    .catch(err => {
-                                        console.log('ServiceWorker registration failed: ', err);
+                                    .catch((err) => {
+                                        console.log('ServiceWorker registration failed:', err);
                                     });
-                            });
+                            };
+
+                            if (document.readyState === 'complete') {
+                                register();
+                            } else {
+                                window.addEventListener('load', register, { once: true });
+                            }
                         }
                     `}
                 </Script>
