@@ -16,13 +16,6 @@ export const metadata = {
         statusBarStyle: "default",
         title: "Smart Home Dashboard",
     },
-    viewport: {
-        width: "device-width",
-        initialScale: 1,
-        maximumScale: 1,
-        userScalable: false,
-        viewportFit: "cover",
-    },
     icons: {
         apple: [
             {
@@ -32,6 +25,14 @@ export const metadata = {
             },
         ],
     },
+};
+
+export const viewport = {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -51,12 +52,14 @@ export default function RootLayout({
                     name="apple-mobile-web-app-title"
                     content="Smart Home Dashboard"
                 />
+                <meta name="mobile-web-app-capable" content="yes" />
+                <meta name="theme-color" content="#000000" />
                 <link
                     rel="apple-touch-icon"
                     href="/icons/apple-touch-icon.png"
                 />
                 <link rel="manifest" href="/manifest.json" />
-                <Script id="service-worker">
+                <Script id="service-worker" strategy="afterInteractive">
                     {`
                         if ('serviceWorker' in navigator) {
                             window.addEventListener('load', () => {

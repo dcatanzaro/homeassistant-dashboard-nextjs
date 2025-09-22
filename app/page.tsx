@@ -1,8 +1,9 @@
 "use client";
 
-import { Wifi, WifiOff } from "lucide-react";
+import { Wifi, WifiOff, Home, Settings, Sun } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
 import { useHomeAssistant } from "@/hooks/use-home-assistant";
 import {
@@ -17,9 +18,17 @@ import { SensorData } from "@/types/dashboard";
 
 export default function Dashboard() {
     const [activeTab, setActiveTab] = useState("overview");
-
     const { sensors, lights, loading, connected, toggleLight } =
         useHomeAssistant();
+
+    // PWA Installation check
+    const [installPrompt, setInstallPrompt] = useState<any>(null);
+
+    if (typeof window !== "undefined") {
+        window.addEventListener("beforeinstallprompt", (e) => {
+            setInstallPrompt(e);
+        });
+    }
 
     if (loading) {
         return <LoadingScreen />;
@@ -30,7 +39,7 @@ export default function Dashboard() {
             {/* Header */}
             <header className="bg-gray-900 border-b border-gray-800 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-bold">Home Dashboard V1</h1>
+                    <h1 className="text-xl font-bold">Smart Home Dashboard</h1>
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1">
                             {connected ? (
@@ -45,6 +54,24 @@ export default function Dashboard() {
                     </div>
                 </div>
             </header>
+
+            {/* PWA Install Banner */}
+            {installPrompt && (
+                <div className="bg-blue-600 p-3 text-center">
+                    <p className="text-sm">
+                        Install this app on your home screen!
+                    </p>
+                    <button
+                        onClick={() => {
+                            installPrompt.prompt();
+                            setInstallPrompt(null);
+                        }}
+                        className="mt-2 bg-white text-blue-600 px-4 py-1 rounded text-sm"
+                    >
+                        Install
+                    </button>
+                </div>
+            )}
 
             {/* Main Content */}
             <ScrollArea className="flex-1">
