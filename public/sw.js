@@ -1,6 +1,6 @@
-const CACHE_NAME = "home-dashboard-v7";
-const STATIC_CACHE = "static-v7";
-const DYNAMIC_CACHE = "dynamic-v7";
+const CACHE_NAME = "home-dashboard-v8";
+const STATIC_CACHE = "static-v8";
+const DYNAMIC_CACHE = "dynamic-v8";
 
 const urlsToCache = [
     "/",
@@ -48,25 +48,9 @@ self.addEventListener("fetch", (event) => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // Handle API calls with network first strategy
+    // Handle API calls - no caching, always fetch from network
     if (url.pathname.startsWith("/api/")) {
-        event.respondWith(
-            fetch(request)
-                .then((response) => {
-                    // Only cache successful responses
-                    if (response.status === 200) {
-                        const responseClone = response.clone();
-                        caches.open(DYNAMIC_CACHE).then((cache) => {
-                            cache.put(request, responseClone);
-                        });
-                    }
-                    return response;
-                })
-                .catch(() => {
-                    // Fallback to cache if network fails
-                    return caches.match(request);
-                })
-        );
+        event.respondWith(fetch(request));
         return;
     }
 
