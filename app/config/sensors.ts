@@ -132,6 +132,116 @@ export const sensorConfigs: SensorConfig[] = [
         unit: "%",
         icon: "droplet",
     },
+    // Battery sensors
+    {
+        entityId: "sensor.sensor_temperature_living_battery",
+        displayName: "Living Room Battery",
+        unit: "%",
+        icon: "battery",
+    },
+    {
+        entityId: "sensor.sensor_temperature_kitchen_battery",
+        displayName: "Kitchen Battery",
+        unit: "%",
+        icon: "battery",
+    },
+    {
+        entityId: "sensor.sensor_temperature_office_battery",
+        displayName: "Office Battery",
+        unit: "%",
+        icon: "battery",
+    },
+    {
+        entityId: "sensor.sensor_temperature_bedroom_battery",
+        displayName: "Bedroom Battery",
+        unit: "%",
+        icon: "battery",
+    },
+    // Link quality sensors
+    {
+        entityId: "sensor.sensor_temperature_living_linkquality",
+        displayName: "Living Room Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.sensor_temperature_kitchen_linkquality",
+        displayName: "Kitchen Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.sensor_temperature_office_linkquality",
+        displayName: "Office Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.sensor_temperature_bedroom_linkquality",
+        displayName: "Bedroom Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.sensor_yard_door_linkquality",
+        displayName: "Yard Door Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.sensor_lobby_door_linkquality",
+        displayName: "Lobby Door Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.lightswitch_living_ladder_linkquality",
+        displayName: "Living Ladder Switch Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.lightswitch_bedroom_linkquality",
+        displayName: "Bedroom Switch Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.lightswitch_kitchen_cupboard_linkquality",
+        displayName: "Kitchen Cupboard Switch Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.lightswitch_kitchen_ceil_linkquality",
+        displayName: "Kitchen Ceiling Switch Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.lightswitch_yard_linkquality",
+        displayName: "Yard Switch Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.lightswitch_lobby_linkquality",
+        displayName: "Lobby Switch Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.lighthue_dinning_2_linkquality",
+        displayName: "Dining Hue 2 Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
+    {
+        entityId: "sensor.lighthue_dinning_1_linkquality",
+        displayName: "Dining Hue 1 Signal",
+        unit: "lqi",
+        icon: "signal",
+    },
 ];
 
 export const sensorEntityIds = sensorConfigs.map((config) => config.entityId);

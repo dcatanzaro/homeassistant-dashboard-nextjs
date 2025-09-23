@@ -41,6 +41,7 @@ export function OverviewTab({ sensors }: OverviewTabProps) {
     // Helper function to get door status
     const getDoorStatus = (door: string) => {
         const doorKey = `binary_sensor.sensor_${door.toLowerCase()}_door_contact`;
+
         return {
             status: sensors[doorKey]?.value === "off" ? "Closed" : "Open",
             lastUpdated: sensors[doorKey]?.lastUpdated

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Wifi, WifiOff } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -31,7 +32,15 @@ export default function Dashboard() {
             <header className="bg-gray-900 border-b border-gray-800 p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-xl font-bold">Smart Home Dashboard</h1>
+
                     <div className="flex items-center gap-2">
+                        <Link
+                            href="/devices"
+                            className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                        >
+                            Devices
+                        </Link>
+
                         <div className="flex items-center gap-1">
                             {connected ? (
                                 <Wifi className="h-4 w-4 text-green-400" />

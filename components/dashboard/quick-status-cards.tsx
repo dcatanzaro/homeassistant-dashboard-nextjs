@@ -14,7 +14,7 @@ interface QuickStatusCardsProps {
 export function QuickStatusCards({ sensors }: QuickStatusCardsProps) {
     return (
         <section className="mb-6">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-6">
                 {/* Temperature Card */}
                 <Card className="w-full h-32 bg-[#18181b] rounded-lg flex items-start">
                     <CardContent className="flex p-2 w-full h-full">

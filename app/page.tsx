@@ -13,6 +13,7 @@ import {
     BottomNavigation,
     LoadingScreen,
 } from "@/components/dashboard";
+import Link from "next/link";
 
 export default function Dashboard() {
     const [activeTab, setActiveTab] = useState("overview");
@@ -29,7 +30,19 @@ export default function Dashboard() {
             <header className="bg-gray-900 border-b border-gray-800 p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-xl font-bold">Smart Home Dashboard</h1>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/devices"
+                            className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                        >
+                            Devices
+                        </Link>
+                        <Link
+                            href="/ipad"
+                            className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                        >
+                            Tablet
+                        </Link>
                         <div className="flex items-center gap-1">
                             {connected ? (
                                 <Wifi className="h-4 w-4 text-green-400" />
