@@ -70,13 +70,22 @@ export default function Dashboard() {
                         className="mb-6"
                     >
                         <TabsList className="grid grid-cols-3 bg-gray-800 h-12">
-                            <TabsTrigger value="overview" className="text-sm">
+                            <TabsTrigger
+                                value="overview"
+                                className="text-sm data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                            >
                                 Overview
                             </TabsTrigger>
-                            <TabsTrigger value="lights" className="text-sm">
+                            <TabsTrigger
+                                value="lights"
+                                className="text-sm data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                            >
                                 Lights
                             </TabsTrigger>
-                            <TabsTrigger value="climate" className="text-sm">
+                            <TabsTrigger
+                                value="climate"
+                                className="text-sm data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                            >
                                 Climate
                             </TabsTrigger>
                         </TabsList>

@@ -2,12 +2,14 @@
 
 import React from "react";
 import { useHistoricalData } from "@/hooks/use-historical-data";
+import { cn } from "@/lib/utils";
 
 interface TemperatureHumidityMiniGraphProps {
     temperatureEntityIds: string[];
     humidityEntityIds: string[];
     currentTemperature: number;
     currentHumidity: number;
+    expanded?: boolean;
 }
 
 export function TemperatureHumidityMiniGraph({
@@ -15,6 +17,7 @@ export function TemperatureHumidityMiniGraph({
     humidityEntityIds,
     currentTemperature,
     currentHumidity,
+    expanded = false,
 }: TemperatureHumidityMiniGraphProps) {
     // Fetch historical data for all temperature sensors
     const temperatureDataQueries = temperatureEntityIds.map((entityId) =>
@@ -115,9 +118,9 @@ export function TemperatureHumidityMiniGraph({
         humidityDataQueries.some((q) => q.error);
 
     // SVG dimensions
-    const width = 220;
-    const height = 80;
-    const margin = { top: 5, right: 8, bottom: 15, left: 25 };
+    const width = expanded ? 600 : 220;
+    const height = expanded ? 200 : 80;
+    const margin = { top: 10, right: 20, bottom: 25, left: 40 };
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
 
@@ -138,7 +141,9 @@ export function TemperatureHumidityMiniGraph({
         .map((point, index) => {
             const x =
                 margin.left +
-                (index / (temperatureDataPoints.length - 1)) * chartWidth;
+                (temperatureDataPoints.length > 1
+                    ? (index / (temperatureDataPoints.length - 1)) * chartWidth
+                    : chartWidth / 2);
             const y =
                 margin.top +
                 chartHeight -
@@ -151,7 +156,9 @@ export function TemperatureHumidityMiniGraph({
         .map((point, index) => {
             const x =
                 margin.left +
-                (index / (humidityDataPoints.length - 1)) * chartWidth;
+                (humidityDataPoints.length > 1
+                    ? (index / (humidityDataPoints.length - 1)) * chartWidth
+                    : chartWidth / 2);
             const y =
                 margin.top +
                 chartHeight -
@@ -202,8 +209,19 @@ export function TemperatureHumidityMiniGraph({
         .substr(2, 9)}`;
 
     return (
-        <div className="flex flex-col items-end">
-            <svg width={width} height={height} className="mb-1">
+        <div className={cn(
+            "flex flex-col",
+            expanded ? "items-center w-full" : "items-end"
+        )}>
+            <svg 
+                width={width} 
+                height={height} 
+                viewBox={`0 0 ${width} ${height}`}
+                className={cn(
+                    expanded ? "mb-2 w-full max-w-full h-auto" : "mb-1"
+                )}
+                preserveAspectRatio="xMidYMid meet"
+            >
                 <defs>
                     <linearGradient
                         id={tempGradientId}
@@ -283,7 +301,7 @@ export function TemperatureHumidityMiniGraph({
                                 x={margin.left - 4}
                                 y={y + 1}
                                 textAnchor="end"
-                                fontSize="6"
+                                fontSize={expanded ? "10" : "6"}
                                 fill="rgb(251, 146, 60)"
                             >
                                 {tick.toFixed(0)}°
@@ -311,7 +329,7 @@ export function TemperatureHumidityMiniGraph({
                                 x={x}
                                 y={height - margin.bottom + 8}
                                 textAnchor="middle"
-                                fontSize="6"
+                                fontSize={expanded ? "10" : "6"}
                                 fill="rgb(156, 163, 175)"
                             >
                                 {label}
@@ -350,7 +368,7 @@ export function TemperatureHumidityMiniGraph({
                             ? "rgb(239, 68, 68)"
                             : `url(#${tempGradientId})`
                     }
-                    strokeWidth="1.5"
+                    strokeWidth={expanded ? "2.5" : "1.5"}
                     points={tempPoints}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -367,7 +385,7 @@ export function TemperatureHumidityMiniGraph({
                             ? "rgb(239, 68, 68)"
                             : `url(#${humidityGradientId})`
                     }
-                    strokeWidth="1.5"
+                    strokeWidth={expanded ? "2.5" : "1.5"}
                     points={humidityPoints}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -379,8 +397,10 @@ export function TemperatureHumidityMiniGraph({
                 {temperatureDataPoints.map((point, index) => {
                     const x =
                         margin.left +
-                        (index / (temperatureDataPoints.length - 1)) *
-                            chartWidth;
+                        (temperatureDataPoints.length > 1
+                            ? (index / (temperatureDataPoints.length - 1)) *
+                              chartWidth
+                            : chartWidth / 2);
                     const y =
                         margin.top +
                         chartHeight -
@@ -420,7 +440,10 @@ export function TemperatureHumidityMiniGraph({
                 {humidityDataPoints.map((point, index) => {
                     const x =
                         margin.left +
-                        (index / (humidityDataPoints.length - 1)) * chartWidth;
+                        (humidityDataPoints.length > 1
+                            ? (index / (humidityDataPoints.length - 1)) *
+                              chartWidth
+                            : chartWidth / 2);
                     const y =
                         margin.top +
                         chartHeight -
@@ -470,7 +493,7 @@ export function TemperatureHumidityMiniGraph({
                     <text
                         x={width - 28}
                         y={14}
-                        fontSize="8"
+                        fontSize={expanded ? "12" : "8"}
                         fill="rgb(251, 146, 60)"
                     >
                         °C
@@ -487,14 +510,17 @@ export function TemperatureHumidityMiniGraph({
                     <text
                         x={width - 28}
                         y={24}
-                        fontSize="8"
+                        fontSize={expanded ? "12" : "8"}
                         fill="rgb(59, 130, 246)"
                     >
                         %
                     </text>
                 </g>
             </svg>
-            <div className="text-[9px] text-gray-400 font-medium">
+            <div className={cn(
+                "text-gray-400 font-medium",
+                expanded ? "text-sm mt-2" : "text-[9px]"
+            )}>
                 {loading
                     ? "Loading..."
                     : error

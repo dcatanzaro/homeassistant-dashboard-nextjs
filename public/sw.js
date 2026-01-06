@@ -1,6 +1,6 @@
-const CACHE_NAME = "home-dashboard-v9";
-const STATIC_CACHE = "static-v9";
-const DYNAMIC_CACHE = "dynamic-v9";
+const CACHE_NAME = "home-dashboard-v9.1";
+const STATIC_CACHE = "static-v9.1";
+const DYNAMIC_CACHE = "dynamic-v9.1";
 
 const urlsToCache = [
     "/",

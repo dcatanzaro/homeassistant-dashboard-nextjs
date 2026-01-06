@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useHistoricalData } from "@/hooks/use-historical-data";
+import { cn } from "@/lib/utils";
 
 interface ElectricityMiniGraphProps {
     powerEntityId: string;
@@ -11,6 +12,7 @@ interface ElectricityMiniGraphProps {
     powerUnit: string;
     currentUnit?: string;
     showCurrent?: boolean;
+    expanded?: boolean;
 }
 
 export function ElectricityMiniGraph({
@@ -21,6 +23,7 @@ export function ElectricityMiniGraph({
     powerUnit,
     currentUnit = "A",
     showCurrent = true,
+    expanded = false,
 }: ElectricityMiniGraphProps) {
     // Fetch historical data for power
     const {
@@ -89,9 +92,9 @@ export function ElectricityMiniGraph({
     const error = powerError || (showCurrent && currentError);
 
     // SVG dimensions
-    const width = 220;
-    const height = 80;
-    const margin = { top: 5, right: 8, bottom: 15, left: 25 };
+    const width = expanded ? 600 : 220;
+    const height = expanded ? 200 : 80;
+    const margin = { top: 10, right: 20, bottom: 25, left: 40 };
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
 
@@ -114,7 +117,9 @@ export function ElectricityMiniGraph({
         .map((point, index) => {
             const x =
                 margin.left +
-                (index / (powerDataPoints.length - 1)) * chartWidth;
+                (powerDataPoints.length > 1
+                    ? (index / (powerDataPoints.length - 1)) * chartWidth
+                    : chartWidth / 2);
             const y =
                 margin.top +
                 chartHeight -
@@ -129,7 +134,10 @@ export function ElectricityMiniGraph({
                   .map((point, index) => {
                       const x =
                           margin.left +
-                          (index / (currentDataPoints.length - 1)) * chartWidth;
+                          (currentDataPoints.length > 1
+                              ? (index / (currentDataPoints.length - 1)) *
+                                chartWidth
+                              : chartWidth / 2);
                       const y =
                           margin.top +
                           chartHeight -
@@ -182,8 +190,19 @@ export function ElectricityMiniGraph({
         .substr(2, 9)}`;
 
     return (
-        <div className="flex flex-col items-end">
-            <svg width={width} height={height} className="mb-1">
+        <div className={cn(
+            "flex flex-col",
+            expanded ? "items-center w-full" : "items-end"
+        )}>
+            <svg 
+                width={width} 
+                height={height} 
+                viewBox={`0 0 ${width} ${height}`}
+                className={cn(
+                    expanded ? "mb-2 w-full max-w-full h-auto" : "mb-1"
+                )}
+                preserveAspectRatio="xMidYMid meet"
+            >
                 <defs>
                     <linearGradient
                         id={powerGradientId}
@@ -264,7 +283,7 @@ export function ElectricityMiniGraph({
                                 x={margin.left - 4}
                                 y={y + 1}
                                 textAnchor="end"
-                                fontSize="6"
+                                fontSize={expanded ? "10" : "6"}
                                 fill="rgb(59, 130, 246)"
                             >
                                 {tick.toFixed(0)}
@@ -277,7 +296,9 @@ export function ElectricityMiniGraph({
                 {timeLabels.map((label, index) => {
                     const x =
                         margin.left +
-                        (index / (timeLabels.length - 1)) * chartWidth;
+                        (timeLabels.length > 1
+                            ? (index / (timeLabels.length - 1)) * chartWidth
+                            : chartWidth / 2);
                     return (
                         <g key={index}>
                             <line
@@ -292,7 +313,7 @@ export function ElectricityMiniGraph({
                                 x={x}
                                 y={height - margin.bottom + 8}
                                 textAnchor="middle"
-                                fontSize="6"
+                                fontSize={expanded ? "10" : "6"}
                                 fill="rgb(156, 163, 175)"
                             >
                                 {label}
@@ -332,7 +353,7 @@ export function ElectricityMiniGraph({
                             ? "rgb(239, 68, 68)"
                             : `url(#${powerGradientId})`
                     }
-                    strokeWidth="1.5"
+                    strokeWidth={expanded ? "2.5" : "1.5"}
                     points={powerPoints}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -350,7 +371,7 @@ export function ElectricityMiniGraph({
                                 ? "rgb(239, 68, 68)"
                                 : `url(#${currentGradientId})`
                         }
-                        strokeWidth="1.5"
+                        strokeWidth={expanded ? "2.5" : "1.5"}
                         points={currentPoints}
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -363,7 +384,10 @@ export function ElectricityMiniGraph({
                 {powerDataPoints.map((point, index) => {
                     const x =
                         margin.left +
-                        (index / (powerDataPoints.length - 1)) * chartWidth;
+                        (powerDataPoints.length > 1
+                            ? (index / (powerDataPoints.length - 1)) *
+                              chartWidth
+                            : chartWidth / 2);
                     const y =
                         margin.top +
                         chartHeight -
@@ -404,8 +428,10 @@ export function ElectricityMiniGraph({
                     currentDataPoints.map((point, index) => {
                         const x =
                             margin.left +
-                            (index / (currentDataPoints.length - 1)) *
-                                chartWidth;
+                            (currentDataPoints.length > 1
+                                ? (index / (currentDataPoints.length - 1)) *
+                                  chartWidth
+                                : chartWidth / 2);
                         const y =
                             margin.top +
                             chartHeight -
@@ -456,7 +482,7 @@ export function ElectricityMiniGraph({
                     <text
                         x={width - 33}
                         y={14}
-                        fontSize="8"
+                        fontSize={expanded ? "12" : "8"}
                         fill="rgb(59, 130, 246)"
                     >
                         {powerUnit}
@@ -475,7 +501,7 @@ export function ElectricityMiniGraph({
                             <text
                                 x={width - 33}
                                 y={24}
-                                fontSize="8"
+                                fontSize={expanded ? "12" : "8"}
                                 fill="rgb(34, 197, 94)"
                             >
                                 {currentUnit}
@@ -484,7 +510,10 @@ export function ElectricityMiniGraph({
                     )}
                 </g>
             </svg>
-            <div className="text-[9px] text-gray-400 font-medium">
+            <div className={cn(
+                "text-gray-400 font-medium",
+                expanded ? "text-sm mt-2" : "text-[9px]"
+            )}>
                 {loading
                     ? "Loading..."
                     : error
